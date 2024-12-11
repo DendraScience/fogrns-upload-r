@@ -1,12 +1,15 @@
-# Fog Upload R Scripts
+# Fog Upload R Script
+
+Purpose:   
+This project provides a script to be used with R-Studio for uploading CSV files into [Dendra](https://dendra.science). It is customized for fog monitoring data from the Fog RNS group.   
 
 Prerequisites:
 
-1. Organization membership role of `admin` is required to create uploads.
+1. User must be an Administrator for the Organization that will receive the uploads. 
 
 2. At least one datastream must exist for each database/table that you want to load data into.
 
-3. The datastream `datapoints_config` must contain an additional source field to permit upload. This must match the source that will be specified in the upload manifest.
+3. The datastream `datapoints_config` must contain an additional **source** field to permit upload. This must match the source that will be specified in the upload manifest.
 
 ## Sample datapoints config with source
 
@@ -26,20 +29,30 @@ Prerequisites:
 
 ## Using the script
 
-1. Ensure that the prerequisites are met above.
+1. Install the [R scripting language](https://cran.rstudio.com/bin/windows/base/R-4.4.2-win.exe) and [R-Studio IDE](https://posit.co/download/rstudio-desktop/).
 
-2. Create a `.env` file in this directory using the `sample.env` as an example. Put your Dendra credentials in here. NEVER check this into source control (use a `.gitignore` file). 
-
-3. Install the R packages listed in the script `upload.r`.
-
-4. Run the script, providing the required arguments:
+2. Download this git repository using the "code" button on the website and select zip file. Unzip into your Documents folder.
+3. Create a `.env` file in this directory using the `sample.env` as an example. Put your Dendra credentials (login and password) in here. NEVER check this into source control (use a `.gitignore` file). 
+4. Launch R-Studio. Navigate to the upload.r file and open.
+5. Make sure the dependency libraries get intalled.  R-Studio may automatically detect and ask to install them.  If not, copy the "install.packages" commands to the Console tab and run each one.
+6. Switch to the Terminal tab.  This is where you will run the upload.r script with arguments.
+7. Run the script, providing the required arguments:
 
 	For example:
 
 	```bash
-	./upload.r --csv "FONR_STA_0_NN_20190710_20190913.csv" --comment "Production csv file import for fonr st0" --source "/fogrns/station_fog_csvs/source_fonr_st0" --station_id "672b9a9db1d7cdf52cecb5c3" --time_adjust 28800
+	./upload.r --csv "FONR_STA_0_NN_20190710_20190913.csv" --comment "Production csv file import for fonr st0" --source "/fogrns/station_fog_csvs/source_fonr_st0" --station_id "672b9a9db1d7cdf52cecb5c3" --time_adjust 25200
 	```
-
+### upload.r arguments explained
+`--csv`: Data file. This is the comma separated value file holding datalogger measurements that will be uploaded.  
+`--comment`: Metadata to give context to what this upload is. Will be stored with the CSV file.   
+`--source`: posix-style filepath. This should match exactly the **source** listed in the datapoints_config section of the datastreams assiciated with this data.   
+`--station_id`: Database ID of the station in Dendra this dataset belongs to.  This can be found on the station metadata page as 'id' in grey. It also shows up in the URL.   
+`--time`: timezone offset in seconds.   
+UTC: Greenwich meant time offset; 0 seconds.   
+PST: Pacific Standard Time offset: 28800 seconds.   
+PDT: Pacific Daylight Time offset: 25200 seconds.   
+	
 ## Manual upload processing steps (live run)
 
 1. Prepare an upload manifest as follows:
